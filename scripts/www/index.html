@@ -1,88 +1,325 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="./static/css/styles.css" />
-        <meta
-            http-equiv="Content-Security-Policy"
-            content="default-src * 'unsafe-inline' 'unsafe-eval'"
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Tauri App</title>
-        <script src="./static/js/main.js"></script>
-    </head>
-    <body>
-        <main class="container">
-            <h1>Welcome to TauriMan</h1>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="智能破冰">
+    <meta name="theme-color" content="#0f1923">
+    <link rel="manifest" href="manifest.json">
+    <title>接触网自适应柔性破冰装置 - 智能决策平台</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 移动端菜单按钮 -->
+    <button class="menu-toggle" id="menuToggle" aria-label="打开菜单">☰</button>
+    
+    <!-- 移动端遮罩 -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-            <div class="row">
-                <a
-                    href="https://tauri.app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <img
-                        src="./assets/tauri.svg"
-                        class="logo tauri"
-                        alt="Tauri logo"
-                    />
-                </a>
-                <a
-                    href="https://pakeplus.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <img
-                        src="https://hk.gh-proxy.org/https://github.com/Sjj1024/PakePlus/blob/main/app-icon.png"
-                        class="logo vanilla"
-                        alt="JavaScript logo"
-                    />
-                </a>
+    <!-- 侧边导航 -->
+    <nav class="sidebar" id="sidebar">
+        <div class="logo">
+            <h2>❄️ 接触网自适应柔性破冰装置</h2>
+            <p>智能决策平台 v2.0.1</p>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" data-tab="tab1">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-text">线路示意图</span>
+            </li>
+            <li class="nav-item" data-tab="tab2">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-text">刀头配重计算</span>
+            </li>
+            <li class="nav-item" data-tab="tab3">
+                <span class="nav-icon">🚄</span>
+                <span class="nav-text">轨道参考速度</span>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <p>v2.0.1</p>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <!-- ===== 页面1: 线路示意图 ===== -->
+        <section id="tab1" class="tab-content active">
+            <div class="page-header">
+                <h1>接触网 & 轨道线示意图</h1>
+                <p>选择线路与示意图类型，查看接触网结构及轨道布局</p>
             </div>
-            <p>Click to get data</p>
-            <form class="row" id="greet-form">
-                <input id="greet-input" placeholder="Enter a name..." />
-                <button type="submit" id="getdata">GET DATA</button>
-            </form>
-            <div class="functions">
-                <a href="./book.html" target="_self">跳转到book.html</a>
-                <a
-                    href="https://www.baidu.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >跳到百度blank
-                </a>
-                <a
-                    href="https://www.baidu.com"
-                    target="_self"
-                    rel="noopener noreferrer"
-                >
-                    跳到百度self
-                </a>
-                <button onclick="sayHello()">点击我</button>
-                <button onclick="sayHello()">下载文件</button>
-                <button onclick="sayHello()">上传文件</button>
-                <button onclick="sayHello()">访问相机</button>
-                <button onclick="sayHello()">访问麦克风</button>
-                <button onclick="sayHello()">访问相册</button>
-                <button class="btn" onclick="openWechat()">打开微信</button>
-                <button class="btn" onclick="openWechatScan()">
-                    打开扫一扫
-                </button>
-                <button class="btn" onclick="openZhihu()">打开知乎</button>
-                <button onclick="sayHello()">打开抖音</button>
-                <button onclick="sayHello()">用浏览器打开</button>
-                <button>打开知乎</button>
+            
+            <!-- 示意图类型选择 -->
+            <div class="diagram-type-bar">
+                <button class="type-btn active" data-diagram="overview">线路总览图</button>
+                <button class="type-btn" data-diagram="catenary">接触网结构图</button>
+                <button class="type-btn" data-diagram="cross">横截面示意图</button>
+                <button class="type-btn" data-diagram="ice">覆冰区段图</button>
             </div>
-            <p id="greet-msg"></p>
-            <img src="./static/image/cursor.jpeg" alt="logo" />
-            <video
-                src="https://hk.gh-proxy.org/https://github.com/Sjj1024/PakePlus/blob/main/docs/static/videos/pakeplus.mp4"
-                autoplay
-                controls
-                style="width: 100%; height: 100%"
-            ></video>
-            <audio src="./static/music/yin.mp3" controls></audio>
-        </main>
-    </body>
+
+            <!-- 线路选择 -->
+            <div class="route-selector">
+                <button class="route-btn active" data-route="haqi">哈齐客专 0-286km</button>
+                <button class="route-btn" data-route="jinghu">京沪高铁 0-1318km</button>
+                <button class="route-btn" data-route="hada">哈大客专 0-921km</button>
+                <button class="route-btn" data-route="jingzhang">京张高铁 0-174km</button>
+                <button class="route-btn" data-route="chengdu">西成客专 0-658km</button>
+                <button class="route-btn" data-route="guangzhou">武广高铁 0-1069km</button>
+                <button class="route-btn" data-route="lanxin">兰新高铁 0-1776km</button>
+                <button class="route-btn" data-route="shenzhen">广深港高铁 0-142km</button>
+            </div>
+
+            <!-- 主示意图区域 -->
+            <div class="diagram-main-layout">
+                <!-- 左侧大图 -->
+                <div class="diagram-left">
+                    <div class="diagram-wrapper" id="diagramWrapper">
+                        <canvas id="railwayCanvas" width="960" height="520"></canvas>
+                    </div>
+                    <!-- 缩略图导航 -->
+                    <div class="thumbnail-strip">
+                        <div class="thumb-item active" data-thumb="main">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='40' viewBox='0 0 60 40'%3E%3Crect width='60' height='40' fill='%231a2d3d' rx='4'/%3E%3Ctext x='30' y='24' text-anchor='middle' fill='%239aa0a6' font-size='10'%3E主视图%3C/text%3E%3C/svg%3E" alt="主视图">
+                            <span>主视图</span>
+                        </div>
+                        <div class="thumb-item" data-thumb="detail">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='40' viewBox='0 0 60 40'%3E%3Crect width='60' height='40' fill='%231a2d3d' rx='4'/%3E%3Ctext x='30' y='24' text-anchor='middle' fill='%239aa0a6' font-size='10'%3E局部放大%3C/text%3E%3C/svg%3E" alt="局部放大">
+                            <span>局部放大</span>
+                        </div>
+                        <div class="thumb-item" data-thumb="param">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='40' viewBox='0 0 60 40'%3E%3Crect width='60' height='40' fill='%231a2d3d' rx='4'/%3E%3Ctext x='30' y='24' text-anchor='middle' fill='%239aa0a6' font-size='10'%3E参数标注%3C/text%3E%3C/svg%3E" alt="参数标注">
+                            <span>参数标注</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- 右侧信息面板 -->
+                <div class="diagram-right">
+                    <div class="diagram-info" id="diagramInfo">
+                        <div class="info-header">
+                            <h3 id="routeName">哈齐客专</h3>
+                            <span class="route-badge" id="routeBadge">0-286km</span>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">线路等级</span>
+                                <span class="info-value" id="routeLevel">高速铁路</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">设计时速</span>
+                                <span class="info-value" id="maxSpeed">250 km/h</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">接触网类型</span>
+                                <span class="info-value" id="catenaryType">弹性链型悬挂</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">接触网高度</span>
+                                <span class="info-value" id="catenaryHeight">5.3 m</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">结构高度</span>
+                                <span class="info-value" id="structHeight">1.6 m</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">跨距</span>
+                                <span class="info-value" id="spanLength">50 m</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">轨道类型</span>
+                                <span class="info-value" id="trackType">有砟轨道</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">钢轨型号</span>
+                                <span class="info-value" id="railModel">CHN60</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">轨距</span>
+                                <span class="info-value" id="trackGauge">1435 mm</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">承力索张力</span>
+                                <span class="info-value" id="tension">15 kN</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">接触线张力</span>
+                                <span class="info-value" id="contactTension">20 kN</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">除冰难度</span>
+                                <span class="info-value" id="iceDifficulty">★★★☆☆</span>
+                            </div>
+                        </div>
+                        <div class="info-description" id="routeDesc">
+                            哈齐高速铁路连接哈尔滨与齐齐哈尔，是黑龙江省重要的铁路干线。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 页面2: 刀头配重计算 ===== -->
+        <section id="tab2" class="tab-content">
+            <div class="page-header">
+                <h1>刀头配重自适应计算</h1>
+                <p>输入冰层厚度，自动计算最佳刀头配重</p>
+            </div>
+            <div class="calculator-container">
+                <div class="input-section">
+                    <div class="input-card">
+                        <h3>📏 冰层参数输入</h3>
+                        <div class="input-group">
+                            <label for="iceThickness">冰层厚度 (mm)</label>
+                            <div class="input-with-slider">
+                                <input type="range" id="thicknessSlider" min="1" max="30" value="5" step="1">
+                                <input type="number" id="iceThickness" min="1" max="30" value="5">
+                                <span class="unit">mm</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="iceType">冰层类型</label>
+                            <select id="iceType">
+                                <option value="rime">雾凇冰</option>
+                                <option value="glaze" selected>雨凇冰</option>
+                                <option value="mixed">混合冰</option>
+                                <option value="hard">硬冰层</option>
+                            </select>
+                        </div>
+                        <button class="calc-btn" id="calcWeightBtn">计算配重</button>
+                    </div>
+                </div>
+                <div class="result-section">
+                    <div class="result-card">
+                        <h3>⚙️ 推荐刀头配重</h3>
+                        <div class="result-display">
+                            <div class="result-main">
+                                <span class="result-number" id="weightResult">470</span>
+                                <span class="result-unit">克</span>
+                            </div>
+                            <div class="result-detail">
+                                <div class="detail-row">
+                                    <span>刀头型号</span>
+                                    <span id="bladeModel">DT-470</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span>适配冰厚范围</span>
+                                    <span id="iceRange">3-7 mm</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span>冲击频率</span>
+                                    <span id="impactFreq">15-20 Hz</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span>建议功率</span>
+                                    <span id="powerSuggest">2.5 kW</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="weight-chart-container">
+                            <canvas id="weightChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 页面3: 轨道参考速度 ===== -->
+        <section id="tab3" class="tab-content">
+            <div class="page-header">
+                <h1>破冰作业参考速度</h1>
+                <p>根据冰层厚度自动推荐除冰作业速度</p>
+            </div>
+            <div class="speed-container">
+                <div class="speed-input-section">
+                    <div class="input-card">
+                        <h3>📊 速度参数设置</h3>
+                        <div class="input-group">
+                            <label for="speedIceThickness">冰层厚度 (mm)</label>
+                            <div class="input-with-slider">
+                                <input type="range" id="speedThicknessSlider" min="1" max="30" value="5" step="1">
+                                <input type="number" id="speedIceThickness" min="1" max="30" value="5">
+                                <span class="unit">mm</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="weatherCondition">天气条件</label>
+                            <select id="weatherCondition">
+                                <option value="clear">晴朗</option>
+                                <option value="cloudy" selected>多云</option>
+                                <option value="snowy">降雪</option>
+                                <option value="storm">暴风雪</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="lineType">线路等级</label>
+                            <select id="lineType">
+                                <option value="high" selected>高速铁路 (250-350 km/h)</option>
+                                <option value="medium">中速铁路 (160-250 km/h)</option>
+                                <option value="low">普速铁路 (≤160 km/h)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="speed-result-section">
+                    <div class="speed-gauge-container">
+                        <canvas id="speedGauge" width="300" height="300"></canvas>
+                        <div class="speed-value-display">
+                            <span class="speed-number" id="speedResult">45</span>
+                            <span class="speed-unit">km/h</span>
+                        </div>
+                    </div>
+                    <div class="speed-detail-card">
+                        <h3>📋 速度建议详情</h3>
+                        <div class="speed-detail-grid">
+                            <div class="speed-detail-item">
+                                <span class="detail-label">推荐速度</span>
+                                <span class="detail-value" id="recSpeed">45 km/h</span>
+                            </div>
+                            <div class="speed-detail-item">
+                                <span class="detail-label">安全速度上限</span>
+                                <span class="detail-value" id="maxSafeSpeed">60 km/h</span>
+                            </div>
+                            <div class="speed-detail-item">
+                                <span class="detail-label">最低作业速度</span>
+                                <span class="detail-value" id="minWorkSpeed">20 km/h</span>
+                            </div>
+                            <div class="speed-detail-item">
+                                <span class="detail-label">除冰效率</span>
+                                <span class="detail-value" id="iceEfficiency">85%</span>
+                            </div>
+                            <div class="speed-detail-item">
+                                <span class="detail-label">预计除冰时间</span>
+                                <span class="detail-value" id="estTime">12 min/km</span>
+                            </div>
+                            <div class="speed-detail-item">
+                                <span class="detail-label">风险等级</span>
+                                <span class="detail-value" id="riskLevel">低</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="speed-table-container">
+                    <h3>📊 冰厚-速度对照表</h3>
+                    <table class="speed-table" id="speedTable">
+                        <thead>
+                            <tr>
+                                <th>冰层厚度 (mm)</th>
+                                <th>推荐速度 (km/h)</th>
+                                <th>安全上限 (km/h)</th>
+                                <th>除冰效率</th>
+                                <th>风险等级</th>
+                            </tr>
+                        </thead>
+                        <tbody id="speedTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
 </html>
